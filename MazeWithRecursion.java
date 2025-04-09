@@ -8,88 +8,88 @@ public class MazeWithRecursion {
     private static final char END = 'E';       // Конечная точка
     private static final char VISITED = '.';   // Посещённая точка при поиске пути
 
-    private final int rows, cols;              // Размеры лабиринта
-    private final char[][] maze;               // Матрица лабиринта
-    private final boolean[][] visited;         // Отслеживание посещённых клеток
-    private final Random random = new Random();
+    private final int totalRows, totalCols;              // Размеры лабиринта
+    private final char[][] mazeGrid;                     // Матрица лабиринта
+    private final boolean[][] visitedCells;              // Отслеживание посещённых клеток
+    private final Random rand = new Random();            // Генератор случайных чисел
 
     // Конструктор: инициализация лабиринта
     public MazeWithRecursion(int rows, int cols) {
         // Обеспечиваем нечётные размеры (для правильной генерации)
-        this.rows = rows % 2 == 0 ? rows + 1 : rows;
-        this.cols = cols % 2 == 0 ? cols + 1 : cols;
-        this.maze = new char[this.rows][this.cols];
-        this.visited = new boolean[this.rows][this.cols];
-        initializeMaze();            // Заполняем лабиринт стенами
-        generateMaze(1, 1);          // Генерируем проходимые пути
-        maze[1][1] = START;          // Задаём начальную точку
-        maze[this.rows - 2][this.cols - 2] = END;  // Задаём конечную точку
+        this.totalRows = rows % 2 == 0 ? rows + 1 : rows;
+        this.totalCols = cols % 2 == 0 ? cols + 1 : cols;
+        this.mazeGrid = new char[this.totalRows][this.totalCols];
+        this.visitedCells = new boolean[this.totalRows][this.totalCols];
+        initializeMaze();                          // Заполняем лабиринт стенами
+        generateMaze(1, 1);                         // Генерируем проходимые пути
+        mazeGrid[1][1] = START;                     // Задаём начальную точку
+        mazeGrid[this.totalRows - 2][this.totalCols - 2] = END;  // Задаём конечную точку
     }
 
     // Инициализация лабиринта стенами
     private void initializeMaze() {
-        for (int i = 0; i < rows; i++) {
-            Arrays.fill(maze[i], WALL); // Все клетки по умолчанию — стены
+        for (int row = 0; row < totalRows; row++) {
+            Arrays.fill(mazeGrid[row], WALL); // Все клетки по умолчанию — стены
         }
     }
 
     // Рекурсивная генерация лабиринта методом обратного отслеживания (backtracking)
-    private void generateMaze(int r, int c) {
+    private void generateMaze(int row, int col) {
         // Возможные направления (влево, вправо, вверх, вниз), смещение на 2 клетки
-        int[] dr = {0, 0, -2, 2};
-        int[] dc = {-2, 2, 0, 0};
+        int[] rowOffsets = {0, 0, -2, 2};
+        int[] colOffsets = {-2, 2, 0, 0};
 
-        visited[r][c] = true;
-        maze[r][c] = PATH;  // Преобразуем текущую клетку в путь
+        visitedCells[row][col] = true;
+        mazeGrid[row][col] = PATH;  // Преобразуем текущую клетку в путь
 
-        List<Integer> dirs = Arrays.asList(0, 1, 2, 3);
-        Collections.shuffle(dirs); // Случайный порядок направлений
+        List<Integer> directions = Arrays.asList(0, 1, 2, 3);
+        Collections.shuffle(directions); // Случайный порядок направлений
 
-        for (int i : dirs) {
-            int nr = r + dr[i];
-            int nc = c + dc[i];
+        for (int direction : directions) {
+            int nextRow = row + rowOffsets[direction];
+            int nextCol = col + colOffsets[direction];
             // Проверяем границы и что клетка не посещалась
-            if (inBounds(nr, nc) && !visited[nr][nc]) {
+            if (isInBounds(nextRow, nextCol) && !visitedCells[nextRow][nextCol]) {
                 // Пробиваем стену между текущей и соседней клеткой
-                maze[r + dr[i] / 2][c + dc[i] / 2] = PATH;
+                mazeGrid[row + rowOffsets[direction] / 2][col + colOffsets[direction] / 2] = PATH;
                 // Рекурсивно переходим к соседней клетке
-                generateMaze(nr, nc);
+                generateMaze(nextRow, nextCol);
             }
         }
     }
 
     // Проверка, находится ли клетка внутри допустимых границ лабиринта (не касаясь стен)
-    private boolean inBounds(int r, int c) {
-        return r > 0 && r < rows - 1 && c > 0 && c < cols - 1;
+    private boolean isInBounds(int row, int col) {
+        return row > 0 && row < totalRows - 1 && col > 0 && col < totalCols - 1;
     }
 
     // Рекурсивный поиск пути от начальной точки к выходу (DFS)
-    public boolean solveMaze(int r, int c) {
+    public boolean solveMaze(int row, int col) {
         // Базовые условия: выход за границы, стена или уже посещённая клетка
-        if (!inBounds(r, c) || maze[r][c] == WALL || maze[r][c] == VISITED) return false;
+        if (!isInBounds(row, col) || mazeGrid[row][col] == WALL || mazeGrid[row][col] == VISITED) return false;
 
         // Успешный выход: достигнута конечная точка
-        if (maze[r][c] == END) return true;
+        if (mazeGrid[row][col] == END) return true;
 
         // Отмечаем клетку как посещённую (если это не стартовая точка)
-        if (maze[r][c] != START) maze[r][c] = VISITED;
+        if (mazeGrid[row][col] != START) mazeGrid[row][col] = VISITED;
 
         // Рекурсивный вызов для всех четырёх направлений
-        if (solveMaze(r + 1, c) || solveMaze(r - 1, c) ||
-            solveMaze(r, c + 1) || solveMaze(r, c - 1)) {
+        if (solveMaze(row + 1, col) || solveMaze(row - 1, col) ||
+            solveMaze(row, col + 1) || solveMaze(row, col - 1)) {
             return true;
         }
 
         // Если путь не найден, возвращаем клетке статус пути (откат)
-        if (maze[r][c] != START) maze[r][c] = PATH;
+        if (mazeGrid[row][col] != START) mazeGrid[row][col] = PATH;
         return false;
     }
 
     // Вывод лабиринта в консоль (текстовое представление)
     public void printMaze() {
-        for (char[] row : maze) {
-            for (char c : row) {
-                System.out.print(c);
+        for (char[] row : mazeGrid) {
+            for (char cell : row) {
+                System.out.print(cell);
             }
             System.out.println();
         }
@@ -99,18 +99,18 @@ public class MazeWithRecursion {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter maze size (rows cols): ");
-        int rows = scanner.nextInt();
-        int cols = scanner.nextInt();
+        int inputRows = scanner.nextInt();
+        int inputCols = scanner.nextInt();
 
         // Проверка минимального размера лабиринта
-        if (rows < 5 || cols < 5) {
+        if (inputRows < 5 || inputCols < 5) {
             System.out.println("Maze size too small. Using default 21x21.");
-            rows = 21;
-            cols = 21;
+            inputRows = 21;
+            inputCols = 21;
         }
 
         // Создание и вывод сгенерированного лабиринта
-        MazeWithRecursion mazeGame = new MazeWithRecursion(rows, cols);
+        MazeWithRecursion mazeGame = new MazeWithRecursion(inputRows, inputCols);
         System.out.println("\nGenerated Maze:");
         mazeGame.printMaze();
 
