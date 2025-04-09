@@ -110,21 +110,18 @@ public class MazeWithRecursion {
         // Проверка ввода: обрабатываем нецелочисленные значения и ошибки
         while (true) {
             try {
-                System.out.print("Enter maze size (rows cols): ");
+                System.out.print("Enter maze size (rows cols): (minimum 5x5)\n> ");
                 inputRows = Integer.parseInt(scanner.next());
                 inputCols = Integer.parseInt(scanner.next());
+                if (inputRows < 5 || inputCols < 5) {
+                    System.out.println("Maze size too small. Try again with values >= 5.");
+                    continue;
+                }
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter two integers.");
                 scanner.nextLine(); // очистить буфер
             }
-        }
-
-        // Проверка минимального размера лабиринта
-        if (inputRows < 5 || inputCols < 5) {
-            System.out.println("Maze size too small. Using default 21x21.");
-            inputRows = 21;
-            inputCols = 21;
         }
 
         // Создание и вывод сгенерированного лабиринта
