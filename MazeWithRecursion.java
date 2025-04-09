@@ -85,11 +85,18 @@ public class MazeWithRecursion {
         return false;
     }
 
-    // Вывод лабиринта в консоль (текстовое представление)
+    // Вывод лабиринта в консоль с координатами строк и столбцов
     public void printMaze() {
-        for (char[] row : mazeGrid) {
-            for (char cell : row) {
-                System.out.print(cell);
+        System.out.print("    ");
+        for (int col = 0; col < totalCols; col++) {
+            System.out.print((col % 10)); // Верхняя строка с номерами столбцов
+        }
+        System.out.println();
+
+        for (int row = 0; row < totalRows; row++) {
+            System.out.printf("%3d ", row % 100); // Номер строки слева
+            for (int col = 0; col < totalCols; col++) {
+                System.out.print(mazeGrid[row][col]);
             }
             System.out.println();
         }
