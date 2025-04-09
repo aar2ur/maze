@@ -105,9 +105,20 @@ public class MazeWithRecursion {
     // Основной метод: ввод, генерация, решение и вывод лабиринта
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter maze size (rows cols): ");
-        int inputRows = scanner.nextInt();
-        int inputCols = scanner.nextInt();
+        int inputRows = 0, inputCols = 0;
+
+        // Проверка ввода: обрабатываем нецелочисленные значения и ошибки
+        while (true) {
+            try {
+                System.out.print("Enter maze size (rows cols): ");
+                inputRows = Integer.parseInt(scanner.next());
+                inputCols = Integer.parseInt(scanner.next());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter two integers.");
+                scanner.nextLine(); // очистить буфер
+            }
+        }
 
         // Проверка минимального размера лабиринта
         if (inputRows < 5 || inputCols < 5) {
