@@ -1,0 +1,19 @@
+Maze Generation Method
+The maze generation method used in this project is based on recursive backtracking. This technique starts from an initial point and randomly explores neighboring cells, carving paths through walls. Each time the algorithm moves to a new cell, it marks it as visited, and the walls between the current cell and the newly visited cell are removed, creating a passage. This process is repeated recursively until all reachable areas of the maze are connected.
+
+The maze grid is initialized with walls (#), and the algorithm works by selecting random directions (up, down, left, right) and carving paths by removing walls between adjacent cells. The recursion ensures that the maze is connected, and the random selection of directions results in a different maze structure each time it is run.
+
+Recursive Algorithm
+The recursive algorithm follows a depth-first search (DFS) approach. It starts from a designated starting point, recursively visiting neighboring cells that have not been visited before. If the algorithm reaches a dead end, it backtracks to the previous cell and continues exploring other unvisited paths.
+
+Key steps of the recursive algorithm:
+
+Mark the current cell as visited.
+
+Randomly shuffle the possible directions to move (up, down, left, right).
+
+For each direction, check if the next cell is within bounds and unvisited.
+
+If a valid move is found, remove the wall between the current cell and the next, and recursively call the algorithm on the new cell.
+
+Repeat until all cells have been visited.
