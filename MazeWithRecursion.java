@@ -34,11 +34,6 @@ public class MazeWithRecursion {
     }
 
     // Рекурсивная генерация лабиринта методом обратного отслеживания (backtracking)
-    // Алгоритм начинает с указанной клетки и случайным образом выбирает направление движения.
-    // Если соседняя клетка ещё не посещена и находится в допустимых границах,
-    // между текущей и следующей клеткой пробивается стена (делается проход),
-    // и рекурсивно вызывается генерация из новой клетки.
-    // Таким образом формируется связный, но случайный и проходной лабиринт.
     private void generateMaze(int row, int col) {
         // Возможные направления (влево, вправо, вверх, вниз), смещение на 2 клетки
         int[] rowOffsets = {0, 0, -2, 2};
@@ -70,22 +65,15 @@ public class MazeWithRecursion {
 
     // Рекурсивный поиск пути от начальной точки к выходу (DFS)
     public boolean solveMaze(int row, int col) {
-        // Базовые условия: выход за границы, стена или уже посещённая клетка
         if (!isInBounds(row, col) || mazeGrid[row][col] == WALL || mazeGrid[row][col] == VISITED) return false;
-
-        // Успешный выход: достигнута конечная точка
         if (mazeGrid[row][col] == END) return true;
-
-        // Отмечаем клетку как посещённую (если это не стартовая точка)
         if (mazeGrid[row][col] != START) mazeGrid[row][col] = VISITED;
 
-        // Рекурсивный вызов для всех четырёх направлений
         if (solveMaze(row + 1, col) || solveMaze(row - 1, col) ||
             solveMaze(row, col + 1) || solveMaze(row, col - 1)) {
             return true;
         }
 
-        // Если путь не найден, возвращаем клетке статус пути (откат)
         if (mazeGrid[row][col] != START) mazeGrid[row][col] = PATH;
         return false;
     }
@@ -112,35 +100,46 @@ public class MazeWithRecursion {
         Scanner scanner = new Scanner(System.in);
         int inputRows = 0, inputCols = 0;
 
-        // Проверка ввода: обрабатываем нецелочисленные значения и ошибки
         while (true) {
-            try {
-                System.out.print("Enter maze size (rows cols): (minimum 5x5) ");
-                inputRows = Integer.parseInt(scanner.next());
-                inputCols = Integer.parseInt(scanner.next());
-                if (inputRows < 5 || inputCols < 5) {
-                    System.out.println("Maze size too small. Try again with values >= 5.");
-                    continue;
+            // Проверка ввода: обрабатываем нецелочисленные значения и ошибки
+            while (true) {
+                try {
+                    System.out.print("Enter maze size (rows cols): (minimum 5x5)\n> ");
+                    inputRows = Integer.parseInt(scanner.next());
+                    inputCols = Integer.parseInt(scanner.next());
+                    if (inputRows < 5 || inputCols < 5) {
+                        System.out.println("Maze size too small. Try again with values >= 5.");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter two integers.");
+                    scanner.nextLine(); // очистить буфер
                 }
-                break;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter two integers.");
-                scanner.nextLine(); // очистить буфер
+            }
+
+            // Создание и вывод сгенерированного лабиринта
+            MazeWithRecursion mazeGame = new MazeWithRecursion(inputRows, inputCols);
+            System.out.println("\nGenerated Maze:");
+            mazeGame.printMaze();
+
+            // Рекурсивный поиск пути и вывод результата
+            System.out.println("\nSolving Maze...");
+            if (mazeGame.solveMaze(1, 1)) {
+                System.out.println("\nSolved Maze:");
+                mazeGame.printMaze();
+            } else {
+                System.out.println("No path found from start to exit.");
+            }
+
+            // Запрос на создание нового лабиринта
+            System.out.print("\nWould you like to generate a new maze? (y/n): ");
+            String choice = scanner.next();
+            if (!choice.equalsIgnoreCase("y")) {
+                break; // Выход из цикла, если пользователь не хочет создать новый лабиринт
             }
         }
 
-        // Создание и вывод сгенерированного лабиринта
-        MazeWithRecursion mazeGame = new MazeWithRecursion(inputRows, inputCols);
-        System.out.println("\nGenerated Maze:");
-        mazeGame.printMaze();
-
-        // Рекурсивный поиск пути и вывод результата
-        System.out.println("\nSolving Maze...");
-        if (mazeGame.solveMaze(1, 1)) {
-            System.out.println("\nSolved Maze:");
-            mazeGame.printMaze();
-        } else {
-            System.out.println("No path found from start to exit.");
-        }
+        scanner.close(); // Закрытие сканера
     }
 }
