@@ -34,6 +34,11 @@ public class MazeWithRecursion {
     }
 
     // Рекурсивная генерация лабиринта методом обратного отслеживания (backtracking)
+    // Алгоритм начинает с указанной клетки и случайным образом выбирает направление движения.
+    // Если соседняя клетка ещё не посещена и находится в допустимых границах,
+    // между текущей и следующей клеткой пробивается стена (делается проход),
+    // и рекурсивно вызывается генерация из новой клетки.
+    // Таким образом формируется связный, но случайный и проходной лабиринт.
     private void generateMaze(int row, int col) {
         // Возможные направления (влево, вправо, вверх, вниз), смещение на 2 клетки
         int[] rowOffsets = {0, 0, -2, 2};
@@ -110,7 +115,7 @@ public class MazeWithRecursion {
         // Проверка ввода: обрабатываем нецелочисленные значения и ошибки
         while (true) {
             try {
-                System.out.print("Enter maze size (rows cols): (minimum 5x5)\n> ");
+                System.out.print("Enter maze size (rows cols): (minimum 5x5) ");
                 inputRows = Integer.parseInt(scanner.next());
                 inputCols = Integer.parseInt(scanner.next());
                 if (inputRows < 5 || inputCols < 5) {
